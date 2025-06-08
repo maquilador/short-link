@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  client:
+    build:
+      context: ./client
+    depends_on:
+      - server
+    networks:
+      - web_network
+
+  server:
+    build:
+      context: ./server
+    networks:
+      - web_network
+    environment:
+      DATABASE_URL: postgresql://short_links:short_links123@postgres:5432/short_links_db?schema=public
+      PORT: 80
+
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - client
+      - server
+    networks:
+      - web_network
+
+  postgres:
+    image: postgres:13
+    container_name: postgres_short_links
+    environment:
+      POSTGRES_USER: short_links
+      POSTGRES_PASSWORD: short_links123
+      POSTGRES_DB: short_links_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - web_network
+
+networks:
+  web_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
