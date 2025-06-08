@@ -4,6 +4,13 @@
 ```
 docker-compose up -d
 ```
+---
+```
+короткие ссылки -> localhost/api/{short}
+```
+```
+swagger -> localhost/api/docs
+```
 
 # Описание задачи:
 
